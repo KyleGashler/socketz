@@ -1,53 +1,62 @@
-var express = require('express');
-var bodyParser = require('body-parser');
+const express = require("express");
+const app = express();
+const http = require("http");
+const cookieParser = require("cookie-parser");
 
-var app = express();
-app.use(express.static(__dirname));
+app.use(cookieParser());
+const server = http.createServer(app);
+const { Server } = require("socket.io");
+const io = new Server(server);
 
-app.use( bodyParser.json());
-app.use( bodyParser.urlencoded({extended:false}) );
+const serverState = {
+  sessionId: {
+    user1: "",
+    user2: "",
+    messages: {
+      from: "",
+      content: "",
+    },
+  },
+};
 
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
-var mongoose = require('mongoose');
+app.get("/", (req, res) => {
+  // sessionId = req.cookies('sessionId');
+  // userName = req.cookies('userName');
 
-var dbUrl = 'mongodb://user:user123@ds141613.mlab.com:41613/messages'
+  // if (!userName) {
+  //     const newUser = Math.random(); //actually would have been the user's id from the admin service
+  //     console.log('setting cookie');
+  //     res.cookie('userName', newUser);
+  // }
 
-var Message = mongoose.model('Message', {
-    name:String,
-    message:String
-})
+  // if (!sessionId) {
+  //     const sessionId = Math.random(); //actually would have been the user's id from the admin service
+  //     if (serverState[sessionId].user1) {
+  //         serverState[sessionId].user2 = userName;
+  //         throw new Error('OVERLOADED USERS FOR A SESSION');
+  //     } else {
+  //         serverState[sessionId].user1 = userName;
+  //     }
+  // }
 
-var messages = [
-    {name:'Tim', message: 'Hi'},
-    {name: 'Jane', message: 'Hello'}
-];
-app.get('/messages', (req, res)=>{
-   Message.find({}, (err, messages) => {
-       res.send(messages);
-   });
+  // res.cookie('name', 'express').send('cookie set'); //Sets name = express
+  res.sendFile(__dirname + "/index.html");
 });
 
-app.post('/messages', (req, res) => {
-    var message = new Message(req.body);
-    message.save( (err) => {
-        if(err){
-            sendStatus(500);
-        }else {
-            io.emit('message', req.body);
-            res.sendStatus(200);
-        }
-    });
+io.on("connection", (socket) => {
+  console.log("a user connected");
+
+  socket.on("message", (msg) => {
+    io.emit("message", msg);
+    console.log("message: " + msg);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("user disconnected");
+    // Send a post to our admin "load balancer" service that the session has concluded
+  });
 });
 
-io.on('connection', (socket) => {
-    console.log('A user connected')
-})
-
-mongoose.connect(dbUrl, (err) => {
-    console.log('mongodb connection', err);
-})
-
-var server = http.listen(3000, () => {
-    console.log('server is listening on port', server.address().port);
+server.listen(3000, () => {
+  console.log("listening on *:3000");
 });

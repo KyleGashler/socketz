@@ -1,19 +1,42 @@
 {
-  "name": "Assign6",
-  "version": "1.0.0",
-  "description": "Wildly cool chat server",
-  "main": "server.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "body-parser": "^1.18.3",
-    "express": "^4.16.4",
-    "mongoose": "^5.3.6",
-    "socket-io": "^1.0.0"
-  }
+    "name": "Socketz",
+    "version": "1.1.0",
+    "description": "",
+    "main": "src/index.ts",
+    "scripts": {
+        "test:unit": "mocha -r ts-node/register \"app/**/*.unit.ts\"",
+        "lint": "eslint . --ext .ts",
+        "lint-and-fix": "eslint . --ext .ts --fix",
+        "go": "node app/index.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/KyleGashler/typescript-template.git"
+    },
+    "author": "Kyle Gashler",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/KyleGashler/socketz/issues"
+    },
+    "homepage": "https://github.com/KyleGashler/socketz#readme",
+    "devDependencies": {
+        "@types/chai": "^4.2.20",
+        "@types/mocha": "^8.2.3",
+        "@typescript-eslint/eslint-plugin": "^4.28.2",
+        "@typescript-eslint/parser": "^4.28.2",
+        "chai": "^4.3.4",
+        "eslint": "^7.30.0",
+        "eslint-config-prettier": "^8.3.0",
+        "eslint-plugin-prettier": "^3.4.0",
+        "mocha": "^9.0.2",
+        "prettier": "^2.3.2",
+        "ts-node": "^10.0.0",
+        "typescript": "^3.3.3"
+    },
+    "dependencies": {
+        "cookie-parse": "^0.4.0",
+        "cookie-parser": "^1.4.5",
+        "express": "^4.17.1",
+        "socket.io": "^4.2.0"
+    }
 }
